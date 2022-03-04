@@ -8,104 +8,68 @@ public static partial class MyEnumerable
 {
     public static TSource MyFirst<TSource>(this IEnumerable<TSource> source)
     {
-        ArgumentNullException.ThrowIfNull(source);
-
-        using var enumerator = source.GetEnumerator();
-        // MoveNext できたら（つまり、最初の要素が存在したら）その要素を返す
-        if (enumerator.MoveNext())
-        {
-            return enumerator.Current;
-        }
-
-        // MoveNext できなかったら（つまり、シーケンスが空だったら）例外を throw する
-        throw new InvalidOperationException("シーケンスが空です");
+        return source.TryGetFirst(out var first)
+            ? first!
+            : throw new InvalidOperationException("シーケンスが空です"); // 要素がなければ例外
     }
 
     public static TSource MyFirst<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
     {
-        ArgumentNullException.ThrowIfNull(source);
-        ArgumentNullException.ThrowIfNull(predicate);
-
-        using var enumerator = source.GetEnumerator();
-        while (enumerator.MoveNext())
-        {
-            // predicate を満たす要素が見つかれば、その要素を返す。
-            if (predicate(enumerator.Current))
-            {
-                return enumerator.Current;
-            }
-        }
-
-        // predicate を満たす要素が見つからない場合は例外を throw する
-        throw new InvalidOperationException("条件を満たす要素が見つかりません");
+        return source.TryGetFirst(predicate, out var first)
+            ? first!
+            : throw new InvalidOperationException("シーケンスが空です"); // 要素がなければ例外
     }
 
-    public static TSource? MyFirstOrDefault<TSource>(this IEnumerable<TSource> source)
+    public static TSource? MyFirstOrDefault<TSource>(this IEnumerable<TSource> source) =>
+        source.TryGetFirst(out var first) ? first : default;
+
+    public static TSource? MyFirstOrDefault<TSource>(this IEnumerable<TSource> source, TSource? defaultValue) =>
+        source.TryGetFirst(out var first) ? first : defaultValue;
+
+    public static TSource? MyFirstOrDefault<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate) =>
+        source.TryGetFirst(predicate, out var first) ? first : default;
+
+    public static TSource? MyFirstOrDefault<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate, TSource? defaultValue) =>
+        source.TryGetFirst(predicate, out var first) ? first : defaultValue;
+
+    // 最初の要素の取得を試み、取得できれば out 引数で結果を返します。
+    private static bool TryGetFirst<TSource>(this IEnumerable<TSource> source, out TSource? first)
     {
         ArgumentNullException.ThrowIfNull(source);
 
         using var enumerator = source.GetEnumerator();
-        // MoveNext できたら（つまり、最初の要素が存在したら）その要素を返す
+        // 要素が見つかれば返す
         if (enumerator.MoveNext())
         {
-            return enumerator.Current;
+            first = enumerator.Current;
+            return true;
         }
 
-        // MoveNext できなかったら（つまり、シーケンスが空だったら）デフォルト値を返す
-        return default;
+        // 要素がなければ false
+        first = default;
+        return false;
     }
 
-    public static TSource? MyFirstOrDefault<TSource>(this IEnumerable<TSource> source, TSource? defaultValue)
-    {
-        ArgumentNullException.ThrowIfNull(source);
-
-        using var enumerator = source.GetEnumerator();
-        // MoveNext できたら（つまり、最初の要素が存在したら）その要素を返す
-        if (enumerator.MoveNext())
-        {
-            return enumerator.Current;
-        }
-
-        // MoveNext できなかったら（つまり、シーケンスが空だったら）デフォルト値を返す
-        return defaultValue;
-    }
-
-    public static TSource? MyFirstOrDefault<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
+    // 最初の要素の取得を試み、取得できれば out 引数で結果を返します。
+    private static bool TryGetFirst<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate, out TSource? first)
     {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(predicate);
 
         using var enumerator = source.GetEnumerator();
+        // 条件を満たす要素が見つかれば返す
         while (enumerator.MoveNext())
         {
-            // predicate を満たす要素が見つかれば、その要素を返す。
             if (predicate(enumerator.Current))
             {
-                return enumerator.Current;
+                first = enumerator.Current;
+                return true;
             }
         }
 
-        // predicate を満たす要素が見つからない場合はデフォルト値を返す
-        return default;
-    }
-
-    public static TSource? MyFirstOrDefault<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate, TSource? defaultValue)
-    {
-        ArgumentNullException.ThrowIfNull(source);
-        ArgumentNullException.ThrowIfNull(predicate);
-
-        using var enumerator = source.GetEnumerator();
-        while (enumerator.MoveNext())
-        {
-            // predicate を満たす要素が見つかれば、その要素を返す。
-            if (predicate(enumerator.Current))
-            {
-                return enumerator.Current;
-            }
-        }
-
-        // predicate を満たす要素が見つからない場合はデフォルト値を返す
-        return defaultValue;
+        // 条件を満たす要素がなければ false
+        first = default;
+        return false;
     }
 }
 
