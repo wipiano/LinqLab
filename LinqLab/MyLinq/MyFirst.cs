@@ -126,8 +126,8 @@ public class MyFirstTest
         // 条件に一致する要素がなければ InvalidOperationException が発生する
         Assert.Throws<InvalidOperationException>(() =>
         {
-                // 10 より大きい要素は存在しない
-                _ = array.MyFirst(x => x > 10);
+            // 10 より大きい要素は存在しない
+            _ = array.MyFirst(x => x > 10);
         });
     }
 
