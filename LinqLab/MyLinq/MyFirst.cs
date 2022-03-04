@@ -23,6 +23,7 @@ public static partial class MyEnumerable
     public static TSource? MyFirstOrDefault<TSource>(this IEnumerable<TSource> source) =>
         source.TryGetFirst(out var first) ? first : default;
 
+    // デフォルト値を指定できるメソッド
     public static TSource? MyFirstOrDefault<TSource>(this IEnumerable<TSource> source, TSource? defaultValue) =>
         source.TryGetFirst(out var first) ? first : defaultValue;
 
@@ -50,7 +51,7 @@ public static partial class MyEnumerable
         return false;
     }
 
-    // 最初の要素の取得を試み、取得できれば out 引数で結果を返します。
+    // 条件を満たす最初の要素の取得を試み、取得できれば out 引数で結果を返します。
     private static bool TryGetFirst<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate, out TSource? first)
     {
         ArgumentNullException.ThrowIfNull(source);
