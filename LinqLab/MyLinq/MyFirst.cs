@@ -8,6 +8,8 @@ public static partial class MyEnumerable
 {
     public static TSource MyFirst<TSource>(this IEnumerable<TSource> source)
     {
+        ArgumentNullException.ThrowIfNull(source);
+
         using var enumerator = source.GetEnumerator();
         // MoveNext できたら（つまり、最初の要素が存在したら）その要素を返す
         if (enumerator.MoveNext())
@@ -21,6 +23,9 @@ public static partial class MyEnumerable
 
     public static TSource MyFirst<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
     {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(predicate);
+
         using var enumerator = source.GetEnumerator();
         while (enumerator.MoveNext())
         {
@@ -37,6 +42,8 @@ public static partial class MyEnumerable
 
     public static TSource? MyFirstOrDefault<TSource>(this IEnumerable<TSource> source)
     {
+        ArgumentNullException.ThrowIfNull(source);
+
         using var enumerator = source.GetEnumerator();
         // MoveNext できたら（つまり、最初の要素が存在したら）その要素を返す
         if (enumerator.MoveNext())
@@ -50,6 +57,8 @@ public static partial class MyEnumerable
 
     public static TSource? MyFirstOrDefault<TSource>(this IEnumerable<TSource> source, TSource? defaultValue)
     {
+        ArgumentNullException.ThrowIfNull(source);
+
         using var enumerator = source.GetEnumerator();
         // MoveNext できたら（つまり、最初の要素が存在したら）その要素を返す
         if (enumerator.MoveNext())
@@ -63,6 +72,9 @@ public static partial class MyEnumerable
 
     public static TSource? MyFirstOrDefault<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate)
     {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(predicate);
+
         using var enumerator = source.GetEnumerator();
         while (enumerator.MoveNext())
         {
@@ -79,6 +91,9 @@ public static partial class MyEnumerable
 
     public static TSource? MyFirstOrDefault<TSource>(this IEnumerable<TSource> source, Func<TSource, bool> predicate, TSource? defaultValue)
     {
+        ArgumentNullException.ThrowIfNull(source);
+        ArgumentNullException.ThrowIfNull(predicate);
+
         using var enumerator = source.GetEnumerator();
         while (enumerator.MoveNext())
         {
