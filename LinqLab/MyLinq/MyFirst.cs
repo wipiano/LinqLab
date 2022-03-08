@@ -57,13 +57,12 @@ public static partial class MyEnumerable
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(predicate);
 
-        using var enumerator = source.GetEnumerator();
         // 条件を満たす要素が見つかれば返す
-        while (enumerator.MoveNext())
+        foreach (var element in source)
         {
-            if (predicate(enumerator.Current))
+            if (predicate(element))
             {
-                first = enumerator.Current;
+                first = element;
                 return true;
             }
         }
